@@ -25,38 +25,42 @@ export class LeaderboardPage {
     public dataService: DataProvider, 
     public storage: Storage,
     public platform: Platform) {
-
-    this.score = this.navParams.get('score');
+      this.score = this.navParams.get('score');
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad LeaderboardPage');
+  // ionViewDidLoad() {
+  //   console.log('ionViewDidLoad LeaderboardPage');
     // Platform.ready isn't required in the new Ionic
-    this.platform.ready().then(() => {
-      /*Storage get*/.then((result) => {
-        let res;
-        if(!result) {
-          res = []
-        } else {
-          res = JSON.parse(result)
-        }
 
-        res.push({
-          score: this.score,
-          time: Date.now()
-        })
-
-        console.log(res);
-
-        this.scoreList = res.sort(function(a, b) {
-          if(a.score > b.score) {
-            return -1;
+    ngOnInit() {
+      this.platform.ready().then(() => {
+      /*Storage get*/
+        this.storage.get('leaderboard').then((result) => {
+         
+          let res;
+          if(!result) {
+            res = [];
           } else {
-            return 1;
+            res = JSON.parse(result);
           }
-        })
 
-        /*Storage set*/.('leaderboard', JSON.stringify(res));
+          res.push({
+            score: this.score,
+            time: Date.now()
+          })
+
+          console.log(res);
+
+          this.scoreList = res.sort(function(a, b) {
+            if(a.score > b.score) {
+              return -1;
+            } else {
+              return 1;
+            }
+          })
+
+        /*Storage set*/
+        this.storage.set('leaderboard', JSON.stringify(res));
       })
     })
   }
